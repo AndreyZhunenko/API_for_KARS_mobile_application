@@ -30,10 +30,10 @@
 	}
 
 	function GetParent_idCategory($Parent_idSend){
-		$response = array();
+		$response = "";
 		
-		while ( ($row = $mySort -> fetch_assoc()) != false ){
-			$response["parent_id"] = $row["parent_id"];
+		while ( ($row = $Parent_idSend -> fetch_assoc()) != false ){
+			$response = $row["parent_id"];
 		}
 
 		return $response;
@@ -57,7 +57,7 @@
 			$MyData = $mysqli -> query ("SELECT `name` FROM `catalog` WHERE `parent_id` = '0' ");
 			$Parent_idSend = $mysqli -> query ("SELECT `parent_id` FROM `catalog` WHERE `parent_id` = '0' GROUP BY `parent_id` ");
 			$ParentIdReady = GetParent_idCategory($Parent_idSend);
-			PrintData_from_database($myData, $ParentIdReady);
+			PrintData_from_database($MyData, $ParentIdReady);
 
 			$mysqli -> close();
 		}
