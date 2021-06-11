@@ -2,7 +2,7 @@
 	
 	$response = array();
 
-	function PrintData_from_database($MyData, $CountSlesh){
+	function PrintData_from_database($MyData, $CountSlesh, $IDcategory){
 		
 		$response["categories"] = array();
 		
@@ -19,6 +19,7 @@
 		}
 		else{
 			$response["Error"] = "-1";
+			$response["id"] = $IDcategory;
 			echo json_encode($response);
 		}
 			
@@ -29,6 +30,17 @@
 		
 		while ( ($row = $mySort -> fetch_assoc()) != false ){
 			$response = $row["sort"];
+		}
+
+		return $response;
+	}
+
+
+	function GetID_category($myID){
+		$response = "";
+		
+		while ( ($row = $myID -> fetch_assoc()) != false ){
+			$response = $row["id"];
 		}
 
 		return $response;
@@ -50,7 +62,8 @@
 
 			$MyData = $mysqli -> query ("SELECT `name` FROM `catalog` WHERE `parent_id` = '0' ");
 			$CountSlesh = "1";
-			PrintData_from_database($MyData, $CountSlesh);
+			$IDcategory = "-1";
+			PrintData_from_database($MyData, $CountSlesh, $IDcategory);
 
 			$mysqli -> close();
 		}
@@ -62,10 +75,13 @@
 
 				$mySort = $mysqli -> query("SELECT `sort` FROM `catalog` WHERE `name` = '$NameCategory' AND `sort` LIKE '0/__________' ");
 				$sortCategory = GetSortCategory($mySort);
+				$myID = $mysqli -> query("SELECT `id` FROM `catalog` WHERE `name` = '$NameCategory' AND `sort` LIKE '0/__________' ");
+				$IDcategory = GetID_category($myID);
+
 				$sortCategory = $sortCategory . "/__________";
 				$myData = $mysqli -> query ("SELECT `name` FROM `catalog` WHERE `sort` LIKE '$sortCategory' ");
 				$CountSlesh = "2";
-				PrintData_from_database($myData, $CountSlesh);
+				PrintData_from_database($myData, $CountSlesh, $IDcategory);
 
 				$mysqli -> close();
 				break;
@@ -77,10 +93,13 @@
 
 				$mySort = $mysqli -> query("SELECT `sort` FROM `catalog` WHERE `name` = '$NameCategory' AND `sort` LIKE '0/__________/__________' ");
 				$sortCategory = GetSortCategory($mySort);
+				$myID = $mysqli -> query("SELECT `id` FROM `catalog` WHERE `name` = '$NameCategory' AND `sort` LIKE '0/__________/__________' ");
+				$IDcategory = GetID_category($myID);
+
 				$sortCategory = $sortCategory . "/__________";
-				$myData = $mysqli -> query ("SELECT `name` FROM `catalog` WHERE `sort` LIKE '$sortCategory' ");
+				$myData = $mysqli -> query ("SELECT `name`, `id` FROM `catalog` WHERE `sort` LIKE '$sortCategory' ");
 				$CountSlesh = "3";
-				PrintData_from_database($myData, $CountSlesh);
+				PrintData_from_database($myData, $CountSlesh, $IDcategory);
 
 				$mysqli -> close();
 				break;
@@ -90,8 +109,15 @@
 				$mysqli = new mysqli (DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 				$mysqli -> query ("SET NAMES 'utf8'");
 
-				$response["Error"] = "-1";
-				echo json_encode($response);
+				$mySort = $mysqli -> query("SELECT `sort` FROM `catalog` WHERE `name` = '$NameCategory' AND `sort` LIKE '0/__________/__________/__________' ");
+				$sortCategory = GetSortCategory($mySort);
+				$myID = $mysqli -> query("SELECT `id` FROM `catalog` WHERE `name` = '$NameCategory' AND `sort` LIKE '0/__________/__________/__________' ");
+				$IDcategory = GetID_category($myID);
+
+				$sortCategory = $sortCategory . "/__________";
+				$myData = $mysqli -> query ("SELECT `name`, `id` FROM `catalog` WHERE `sort` LIKE '$sortCategory' ");
+				$CountSlesh = "4";
+				PrintData_from_database($myData, $CountSlesh, $IDcategory);
 
 				$mysqli -> close();
 				break;
